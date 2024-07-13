@@ -22,9 +22,18 @@ const registerUser = async (req: Request, res: Response) => {
 // Login user and give token
 const loginUser = async (req: Request, res: Response) => {
     try {
-        
+        const {username, password} = req.body
+        const user = await usersCollection.findOne({username})
+        if(!user) {
+            return res.status(404).json({message: 'Invalid credentials'})
+        }
+        const isPasswordValid = await bcrypt.compare(password, user.password)
+        if(!isPasswordValid){
+            return res.status(404).json({message: 'Invalid credentials'})
+        }
+        console.log(user)
     } catch (error) {
-        
+        console.error(error)
     }
 }
 
