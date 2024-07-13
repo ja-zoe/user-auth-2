@@ -1,12 +1,27 @@
-import { useState } from "react"
+import { FormEvent, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import axios from "axios"
 
 const Signup = () => {
   const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const navigate = useNavigate()
 
-  const handleSubmit = (e: any) => {
+  // On user submit, send data to server to process registration.
+  // On success, user is navigated to the login page
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
+    try {
+      await axios.post("http://localhost:3001/user/register", {
+        email,
+        username,
+        password
+      })
+      navigate('/login') 
+    } catch(error) {
+      console.error("Error during registration: ", error)
+    }
   }
   
   return (
@@ -16,11 +31,11 @@ const Signup = () => {
           <h1 className="text-3xl"><strong>Sign Up</strong></h1>
           <div className="flex flex-col items-center w-full mt-2">
             <label className="text-lg">Email</label>
-            <input className="rounded-lg w-[60%] text-black pl-1" onChange={e => setEmail(e.target.value)} placeholder="Enter Email"/>
+            <input type="email" required className="rounded-lg w-[60%] text-black pl-1" onChange={e => setEmail(e.target.value)} placeholder="Enter Email"/>
             <label className="text-lg">Username</label>
-            <input className="rounded-lg w-[60%] text-black pl-1" onChange={e => setUsername(e.target.value)} placeholder="Enter Username"/>
+            <input type="text" className="rounded-lg w-[60%] text-black pl-1" required onChange={e => setUsername(e.target.value)} placeholder="Enter Username"/>
             <label className="text-lg">Password</label>
-            <input className="rounded-lg w-[60%] text-black pl-1" onChange={e => setPassword(e.target.value)} placeholder="Enter Password"/>
+            <input type="password" required className="rounded-lg w-[60%] text-black pl-1" onChange={e => setPassword(e.target.value)} placeholder="Enter Password"/>
             <button type="submit" className="bg-slate-600 mt-2 rounded-lg w-20 h-7 text-lg hover:bg-slate-800">Sign Up</button>
           </div>
         </form>
