@@ -2,6 +2,7 @@ require('dotenv').config()
 import express from "express";
 import connectDB from "./config/connectDB";
 import userRouter from "./routes/userRoutes";
+import cors from "cors"
 
 const app = express()
 
@@ -9,6 +10,7 @@ const app = express()
 connectDB()
 
 app.use(express.json())
+app.use(cors())
 
 app.use('/user', userRouter)
 

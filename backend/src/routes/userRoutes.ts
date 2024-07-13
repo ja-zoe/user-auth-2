@@ -3,6 +3,7 @@ import userController from "../controllers/userController"
 
 const router = express.Router()
 
+// In the app, all of these routes fall under the '/user' base route.
 router.post('/register', userController.registerUser)
 router.post('/login', userController.loginUser)
 router.put('/update', userController.updateUser)
