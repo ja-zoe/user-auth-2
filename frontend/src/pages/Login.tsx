@@ -14,7 +14,7 @@ const Login = () => {
         username,
         password
       })
-      //navigate('/account')
+      navigate('/account')
     } catch (error) {
       if(axios.isAxiosError(error)){
         console.error("Error logging in: ", error.response?.data?.message || 'An error occurred');
