@@ -2,6 +2,7 @@ import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import usersCollection from "../models/usersCollection"
 import { Request, Response } from "express"
+import { createAccessToken, createRefreshToken } from "../utils/auth"
 
 // Register User 
 const registerUser = async (req: Request, res: Response) => {
@@ -31,6 +32,8 @@ const loginUser = async (req: Request, res: Response) => {
         if(!isPasswordValid){
             return res.status(404).json({message: 'Invalid credentials'})
         }
+        const accessToken = createAccessToken(user.username)
+        const RefreshToken = createRefreshToken(user.username)
         console.log(user)
     } catch (error) {
         console.error(error)
