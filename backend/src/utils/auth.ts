@@ -1,9 +1,12 @@
 import jwt from "jsonwebtoken"
 
-const createAccessToken = (username: String) => {
+const createAccessToken = (username: String, roles?: Array<number>) => {
     if(process.env.ACCESS_TOKEN_SECRET){
         const token = jwt.sign(
-            {username: username}, 
+            {
+                username: username,
+                roles: roles || [2001] 
+            }, 
             process.env.ACCESS_TOKEN_SECRET,
             {expiresIn: '5min'}
         )
@@ -17,7 +20,9 @@ const createAccessToken = (username: String) => {
 const createRefreshToken = (username: String) => {
     if(process.env.REFRESH_TOKEN_SECRET) {
         const token = jwt.sign(
-            { username: username },
+            { 
+                username: username,
+            },
             process.env.REFRESH_TOKEN_SECRET,
             { expiresIn: '1hr' }
         )
