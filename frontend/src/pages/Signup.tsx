@@ -1,24 +1,35 @@
 import { FormEvent, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
+import { useAuthContext } from "../hooks/useAuthContext"
 
 const Signup = () => {
   const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
+  const { dispatch } = useAuthContext()
 
   // On user submit, send data to server to process registration.
   // On success, user is navigated to the login page
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     try {
-      await axios.post("http://localhost:3001/user/register", {
+      const response = await axios.post("http://localhost:3001/user/register", {
         email,
         username,
         password
       })
-      navigate('/login') 
+      const { roles } = response.data
+      dispatch({
+        type: "LOGIN",
+        payload: {
+          email,
+          username,
+          roles
+        }
+      })
+      navigate('/account') 
     } catch(error) {
       console.error("Error during registration: ", error)
     }

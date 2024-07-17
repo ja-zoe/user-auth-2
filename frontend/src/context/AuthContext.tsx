@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useReducer, useState } from "react";
+import { createContext, ReactNode, useReducer} from "react";
 import { User } from "../types/User";
 
 interface AuthContextProviderProps {
@@ -6,24 +6,29 @@ interface AuthContextProviderProps {
 }
 
 export interface AuthAction {
-    type: "LOGIN" | "SIGNOUT",
-    payload: User
+    type: "LOGIN" | "LOGOUT",
+    payload?: { email: String, username: String, roles: number[] }
 }
 
 export const AuthContext = createContext<{
     state: User,
-    dispatch: React.Dispatch<AuthAction>
+    dispatch: React.Dispatch<AuthAction>,
+    logout: () => void
 } | null>(null)
 
 export const authReducer = (state: User, action: AuthAction) => {
     switch(action.type) {
         case "LOGIN":
-            return { ...action.payload }
-        case "SIGNOUT":
+            if (action.payload) {
+                return { ...action.payload, isLoggedIn: true }
+            }
+            return state
+        case "LOGOUT":
             return { 
                 email: null,
                 username: null,
-                isLoggedIn: null 
+                isLoggedIn: null,
+                roles: null 
             }
         default:
             return state
@@ -34,11 +39,16 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     const [state, dispatch] = useReducer(authReducer, {
         email: null,
         username: null,
-        isLoggedIn: null
+        isLoggedIn: null,
+        roles: null
     })
 
+    const logout = () => {
+        dispatch({type: "LOGOUT"})
+    }
+
     return (
-        <AuthContext.Provider value={{state, dispatch}}>
+        <AuthContext.Provider value={{state, dispatch, logout}}>
             { children }
         </AuthContext.Provider>
     )

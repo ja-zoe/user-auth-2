@@ -1,5 +1,6 @@
 export interface User {
     email: String | null,
     isLoggedIn: boolean | null,
-    username: String | null
+    username: String | null,
+    roles: number[] | null
 }

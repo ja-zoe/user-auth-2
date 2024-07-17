@@ -1,20 +1,36 @@
 import { useState } from "react"
 import axios from "axios"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
+import { useAuthContext } from "../hooks/useAuthContext"
 
 const Login = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
+  const { dispatch } = useAuthContext()
+  const location = useLocation()
+  const from = location.state?.from?.pathname || '/account'
 
   const handleSubmit = async (e: any) => {
     e.preventDefault()
     try {
-      await axios.post('http://localhost:3001/user/login',{
+      const response = await axios.post('http://localhost:3001/user/login',{
         username,
         password
       })
-      navigate('/account')
+
+      const { email, roles } = response.data
+
+      dispatch({
+        type: "LOGIN",
+        payload: {
+          username,
+          email,
+          roles
+        }
+      })
+      console.log(roles)
+      navigate(from, { replace: true })
     } catch (error) {
       if(axios.isAxiosError(error)){
         console.error("Error logging in: ", error.response?.data?.message || 'An error occurred');
