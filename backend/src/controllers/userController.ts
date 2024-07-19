@@ -14,8 +14,15 @@ const registerUser = async (req: Request, res: Response) => {
         const newUser = new usersCollection({ username, email, password: hashedPassword })
         let { roles } = await newUser.save()
         roles = Object.values(roles)
-        const token = createAccessToken(username)
-        res.status(200).json({ message: "User created successfully", username, token, roles })
+        const accessToken = createAccessToken(username)
+        const refreshToken = createRefreshToken(username)
+        res.cookie('jwt', refreshToken, {
+            httpOnly: true, // accessible only by web server
+            secure: true, // https
+            sameSite: 'none', // cross-site cookie
+            maxAge: 60 * 1000 // cookie expiry: set to match refresh Token
+        })
+        res.status(200).json({ message: "User created successfully", username, accessToken, roles })
         console.log("User created successfully")
     } catch (error) {
         console.error(error)
@@ -37,7 +44,14 @@ const loginUser = async (req: Request, res: Response) => {
         if(!isPasswordValid){
             return res.status(404).json({message: 'Invalid credentials'})
         }
-        const accessToken = createAccessToken(user.username)
+        const accessToken = createAccessToken(username)
+        const refreshToken = createRefreshToken(username)
+        res.cookie('jwt', refreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+            maxAge: 60 * 1000
+        })
         res.status(200).json({ message: "User signed in successfully", username, email, roles, accessToken })
         console.log("User logged in")
     } catch (error) {
@@ -82,4 +96,10 @@ const registerAdmin = async (req: Request, res: Response) => {
     }
 }
 
-export default { registerUser, loginUser, updateUser, deleteUser, registerAdmin }
+const getInfo = async (req: Request, res: Response) => {
+    const username = req.user
+    const roles = req.roles
+    res.status(200).json({ message: `You are user ${username} with the roles ${roles}`})
+}
+
+export default { registerUser, loginUser, updateUser, deleteUser, registerAdmin, getInfo }

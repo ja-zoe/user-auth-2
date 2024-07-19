@@ -8,7 +8,7 @@ const createAccessToken = (username: String, roles?: Array<number>) => {
                 roles: roles || [2001] 
             }, 
             process.env.ACCESS_TOKEN_SECRET,
-            {expiresIn: '5min'}
+            {expiresIn: '10s'}
         )
         return token
     } else {
@@ -24,7 +24,7 @@ const createRefreshToken = (username: String) => {
                 username: username,
             },
             process.env.REFRESH_TOKEN_SECRET,
-            { expiresIn: '1hr' }
+            { expiresIn: '1min' }
         )
         return token
     } else {
