@@ -48,9 +48,9 @@ const loginUser = async (req: Request, res: Response) => {
         const refreshToken = createRefreshToken(username)
         res.cookie('jwt', refreshToken, {
             httpOnly: true,
-            secure: true,
-            sameSite: 'none',
-            maxAge: 60 * 1000
+            secure: true, 
+            sameSite: 'none',  
+            maxAge: 60 * 1000 
         })
         res.status(200).json({ message: "User signed in successfully", username, email, roles, accessToken })
         console.log("User logged in")
